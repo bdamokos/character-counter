@@ -151,6 +151,28 @@
       margin-bottom: 14px;
     }
 
+    .metric-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .metric-toggle {
+      padding: 8px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: rgba(27, 15, 10, 0.07);
+    }
+
+    .metric-toggle[aria-pressed="true"] {
+      background: rgba(255, 94, 54, 0.16);
+    }
+
+    .metric-toggle:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+
     .button-row {
       display: flex;
       flex-wrap: wrap;
@@ -208,6 +230,36 @@
       box-shadow:
         0 0 0 4px rgba(255, 94, 54, 0.14),
         inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .preview {
+      margin-bottom: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(27, 15, 10, 0.08);
+      border-radius: 18px;
+      background: rgba(255, 253, 250, 0.78);
+    }
+
+    .preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .preview-text {
+      margin: 0;
+      min-height: 2.8em;
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .preview-text.empty {
+      color: var(--muted);
     }
 
     .editor-foot {
@@ -270,6 +322,10 @@
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .metric-head {
@@ -447,14 +503,32 @@
         ></textarea>
 
         <div class="editor-foot">
-          <p class="helper" id="micro-summary">0 characters, 0 words, 0 hashtags.</p>
+          <p class="helper" id="micro-summary">0 characters, 0 words, 0 spaces, 0 hashtags.</p>
         </div>
       </section>
 
       <aside class="panel summary">
-        <div class="summary-top"><div class="panel-label">Limits</div></div>
+        <div class="summary-top">
+          <div class="panel-label">Limits</div>
+          <div class="metric-toggles" aria-label="Counter options">
+            <button type="button" class="metric-toggle" aria-pressed="true" disabled>Post</button>
+            <button type="button" class="metric-toggle" data-toggle-group="dm" aria-pressed="false">DM</button>
+            <button type="button" class="metric-toggle" data-toggle-group="bio" aria-pressed="false">Bio</button>
+            <button type="button" class="metric-toggle" data-toggle-group="username" aria-pressed="false">Username</button>
+            <button type="button" class="metric-toggle" data-toggle-group="profile" aria-pressed="false">Profile</button>
+            <button type="button" class="metric-toggle" data-toggle-group="comment" aria-pressed="false">Comment</button>
+          </div>
+        </div>
 
-        <div class="main-stats">
+        <div class="preview" aria-live="polite" data-group="post">
+          <div class="preview-head">
+            <div class="panel-label">First Fold Preview</div>
+            <div class="helper" id="preview-count">0 / 125</div>
+          </div>
+          <p class="preview-text empty" id="preview-text">The first 125 characters shown in-feed.</p>
+        </div>
+
+        <div class="main-stats" data-group="post">
           <article class="main-card" id="total-card">
             <span class="label">Characters typed</span>
             <div class="big-number" id="total-count">0 / 2200</div>
@@ -463,12 +537,12 @@
           <article class="main-card" id="remaining-card">
             <span class="label">Characters remaining</span>
             <div class="big-number" id="remaining-count">2200</div>
-            <div class="big-detail" id="space-count">0 spaces</div>
+            <div class="big-detail" id="remaining-detail">Within limit</div>
           </article>
         </div>
 
         <div class="metrics-grid">
-          <article class="metric" data-limit="1000" data-key="dm">
+          <article class="metric" data-limit="1000" data-key="dm" data-group="dm" hidden>
             <div class="metric-head">
               <div>
                 <span class="label">DM</span>
@@ -479,7 +553,7 @@
             <div class="progress"><span id="bar-dm"></span></div>
           </article>
 
-          <article class="metric" data-limit="150" data-key="bio">
+          <article class="metric" data-limit="150" data-key="bio" data-group="bio" hidden>
             <div class="metric-head">
               <div>
                 <span class="label">Bio</span>
@@ -490,7 +564,7 @@
             <div class="progress"><span id="bar-bio"></span></div>
           </article>
 
-          <article class="metric" data-limit="30" data-key="username">
+          <article class="metric" data-limit="30" data-key="username" data-group="username" hidden>
             <div class="metric-head">
               <div>
                 <span class="label">Username</span>
@@ -501,7 +575,7 @@
             <div class="progress"><span id="bar-username"></span></div>
           </article>
 
-          <article class="metric" data-limit="30" data-key="profile">
+          <article class="metric" data-limit="30" data-key="profile" data-group="profile" hidden>
             <div class="metric-head">
               <div>
                 <span class="label">Profile name</span>
@@ -512,7 +586,7 @@
             <div class="progress"><span id="bar-profile"></span></div>
           </article>
 
-          <article class="metric" data-limit="125" data-key="truncation">
+          <article class="metric" data-limit="125" data-key="truncation" data-group="post">
             <div class="metric-head">
               <div>
                 <span class="label">Caption truncation</span>
@@ -523,7 +597,7 @@
             <div class="progress"><span id="bar-truncation"></span></div>
           </article>
 
-          <article class="metric" data-limit="30" data-key="hashtags">
+          <article class="metric" data-limit="30" data-key="hashtags" data-group="post">
             <div class="metric-head">
               <div>
                 <span class="label">Hashtags</span>
@@ -534,7 +608,7 @@
             <div class="progress"><span id="bar-hashtags"></span></div>
           </article>
 
-          <article class="metric" data-limit="2200" data-key="comment">
+          <article class="metric" data-limit="2200" data-key="comment" data-group="comment" hidden>
             <div class="metric-head">
               <div>
                 <span class="label">Comment</span>
@@ -545,7 +619,7 @@
             <div class="progress"><span id="bar-comment"></span></div>
           </article>
 
-          <article class="metric" data-limit="2200" data-key="caption">
+          <article class="metric" data-limit="2200" data-key="caption" data-group="post">
             <div class="metric-head">
               <div>
                 <span class="label">Caption</span>
@@ -566,12 +640,17 @@
     const textInput = document.getElementById("text-input");
     const totalCount = document.getElementById("total-count");
     const remainingCount = document.getElementById("remaining-count");
+    const remainingDetail = document.getElementById("remaining-detail");
     const wordCount = document.getElementById("word-count");
-    const spaceCount = document.getElementById("space-count");
     const microSummary = document.getElementById("micro-summary");
+    const previewCount = document.getElementById("preview-count");
+    const previewText = document.getElementById("preview-text");
     const totalCard = document.getElementById("total-card");
     const remainingCard = document.getElementById("remaining-card");
     const toast = document.getElementById("toast");
+    const toggleButtons = document.querySelectorAll("[data-toggle-group]");
+    const groupedElements = document.querySelectorAll("[data-group]");
+    const selectedGroups = new Set(["post"]);
 
     const captionLimit = 2200;
     const metricConfig = {
@@ -675,6 +754,17 @@
       }, 1800);
     }
 
+    function applyMetricVisibility() {
+      groupedElements.forEach((element) => {
+        element.hidden = !selectedGroups.has(element.dataset.group);
+      });
+
+      toggleButtons.forEach((button) => {
+        const active = selectedGroups.has(button.dataset.toggleGroup);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
     async function copyText() {
       if (!navigator.clipboard) {
         textInput.select();
@@ -700,13 +790,18 @@
       const spaces = countSpaces(text);
       const hashtags = countHashtags(text);
       const remaining = captionLimit - characters;
+      const preview = text.slice(0, 125);
+      const hasOverflow = characters > 125;
 
       totalCount.textContent = `${characters} / ${captionLimit}`;
       remainingCount.textContent = String(remaining);
+      remainingDetail.textContent = remaining < 0 ? `${Math.abs(remaining)} over limit` : "Within limit";
       wordCount.textContent = `${words} ${words === 1 ? "word" : "words"}`;
-      spaceCount.textContent = `${spaces} ${spaces === 1 ? "space" : "spaces"}`;
       microSummary.textContent =
-        `${characters} characters, ${words} ${words === 1 ? "word" : "words"}, ${hashtags} ${hashtags === 1 ? "hashtag" : "hashtags"}.`;
+        `${characters} characters, ${words} ${words === 1 ? "word" : "words"}, ${spaces} ${spaces === 1 ? "space" : "spaces"}, ${hashtags} ${hashtags === 1 ? "hashtag" : "hashtags"}.`;
+      previewCount.textContent = `${Math.min(characters, 125)} / 125`;
+      previewText.textContent = preview ? `${preview}${hasOverflow ? "..." : ""}` : "The first 125 characters shown in-feed.";
+      previewText.classList.toggle("empty", !preview);
 
       totalCard.classList.remove("warning", "overflow");
       remainingCard.classList.remove("warning", "overflow");
@@ -735,7 +830,19 @@
       textInput.focus();
     });
     textInput.addEventListener("input", updateCounts);
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const group = button.dataset.toggleGroup;
+        if (selectedGroups.has(group)) {
+          selectedGroups.delete(group);
+        } else {
+          selectedGroups.add(group);
+        }
+        applyMetricVisibility();
+      });
+    });
 
+    applyMetricVisibility();
     updateCounts();
   </script>
 </body>
