@@ -75,37 +75,7 @@
     main {
       width: min(calc(100% - 32px), var(--container));
       margin: 0 auto;
-      padding: 32px 0 56px;
-    }
-
-    .hero {
-      position: relative;
-      overflow: clip;
-      display: grid;
-      gap: 24px;
-      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-      padding: 34px;
-      border: 1px solid rgba(27, 15, 10, 0.08);
-      border-radius: var(--radius-xl);
-      background: linear-gradient(160deg, rgba(255, 252, 248, 0.86), rgba(255, 246, 240, 0.68));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      isolation: isolate;
-      animation: rise 700ms ease-out both;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 320px;
-      height: 320px;
-      right: -60px;
-      top: -40px;
-      border-radius: 50%;
-      background: conic-gradient(from 160deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
-      opacity: 0.16;
-      filter: blur(12px);
-      z-index: -1;
+      padding: 18px 0 32px;
     }
 
     .eyebrow,
@@ -118,68 +88,41 @@
     }
 
     h1 {
-      margin: 10px 0 12px;
-      max-width: 11ch;
+      margin: 0;
       font-family: "Syne", sans-serif;
-      font-size: clamp(3.2rem, 7vw, 6.8rem);
-      line-height: 0.9;
+      font-size: clamp(2rem, 4.4vw, 3.5rem);
+      line-height: 0.95;
       letter-spacing: -0.06em;
     }
 
-    .hero-copy {
-      margin: 0;
-      max-width: 42ch;
-      font-size: 1.04rem;
-      line-height: 1.55;
-      color: var(--muted);
-    }
-
-    .hero-meta {
+    .topbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 22px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px 18px;
+      margin-bottom: 14px;
     }
 
     .pill {
-      padding: 10px 14px;
+      padding: 8px 12px;
       border: 1px solid rgba(27, 15, 10, 0.08);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.65);
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       color: var(--ink);
     }
 
-    .hero-aside {
-      align-self: end;
-      padding: 22px;
-      border-radius: var(--radius-lg);
-      background: rgba(27, 15, 10, 0.95);
-      color: #fff8f2;
-      transform: rotate(-2.5deg);
-      box-shadow: 0 18px 50px rgba(27, 15, 10, 0.25);
-    }
-
-    .hero-aside strong {
-      display: block;
-      margin-top: 10px;
-      font-family: "Syne", sans-serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      line-height: 0.95;
-      letter-spacing: -0.05em;
-    }
-
-    .hero-aside p {
-      margin: 12px 0 0;
-      color: rgba(255, 248, 242, 0.74);
-      line-height: 1.5;
+    .limit-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .workspace {
       display: grid;
-      gap: 24px;
+      gap: 18px;
       grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-      margin-top: 24px;
     }
 
     .panel {
@@ -192,7 +135,7 @@
     }
 
     .editor {
-      padding: 24px;
+      padding: 18px;
     }
 
     .editor-top,
@@ -201,11 +144,11 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .summary-top {
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .button-row {
@@ -245,15 +188,15 @@
 
     textarea {
       width: 100%;
-      min-height: 360px;
+      min-height: 300px;
       resize: vertical;
       border: 1px solid rgba(27, 15, 10, 0.1);
-      border-radius: 24px;
-      padding: 22px;
+      border-radius: 20px;
+      padding: 18px;
       background: var(--surface-strong);
       font: inherit;
-      font-size: 1.06rem;
-      line-height: 1.6;
+      font-size: 1rem;
+      line-height: 1.55;
       color: var(--ink);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
       transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
@@ -282,7 +225,7 @@
     }
 
     .summary {
-      padding: 22px;
+      padding: 18px;
     }
 
     .main-stats {
@@ -377,16 +320,6 @@
       color: var(--danger);
     }
 
-    .footer-note {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: var(--radius-md);
-      background: rgba(27, 15, 10, 0.06);
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-
     .toast {
       position: fixed;
       left: 50%;
@@ -430,32 +363,29 @@
     }
 
     @media (max-width: 980px) {
-      .hero,
       .workspace {
         grid-template-columns: 1fr;
-      }
-
-      .hero-aside {
-        transform: none;
       }
     }
 
     @media (max-width: 720px) {
       main {
         width: min(calc(100% - 20px), var(--container));
-        padding-top: 18px;
-        padding-bottom: 34px;
+        padding-top: 14px;
+        padding-bottom: 24px;
       }
 
-      .hero,
+      .topbar {
+        padding: 0;
+      }
+
       .editor,
       .summary {
-        padding: 18px;
+        padding: 16px;
       }
 
       h1 {
-        max-width: none;
-        font-size: clamp(2.7rem, 17vw, 4.5rem);
+        font-size: clamp(1.9rem, 12vw, 2.8rem);
       }
 
       .editor-top,
@@ -471,7 +401,7 @@
       }
 
       textarea {
-        min-height: 300px;
+        min-height: 240px;
       }
 
       button {
@@ -486,38 +416,23 @@
 </head>
 <body>
   <main>
-    <section class="hero">
+    <section class="topbar">
       <div>
-        <div class="eyebrow">Single-page utility</div>
+        <div class="eyebrow">Instagram Character Counter</div>
         <h1>Instagram counter.</h1>
-        <p class="hero-copy">
-          Type once and see the limits that matter: caption length, truncation, hashtags, bio, DM,
-          profile name, username, and comments. No ads. No SEO sludge. Just the numbers.
-        </p>
-        <div class="hero-meta">
-          <div class="pill">Caption limit 2200</div>
-          <div class="pill">Bio 150</div>
-          <div class="pill">DM 1000</div>
-          <div class="pill">Hashtags 30</div>
-        </div>
       </div>
-      <aside class="hero-aside">
-        <div class="panel-label">First fold</div>
-        <strong id="hero-preview">0 / 125</strong>
-        <p>
-          Instagram truncates longer captions in-feed. Keep the hook in the first 125 characters if
-          you want the visible preview to land.
-        </p>
-      </aside>
+      <div class="limit-pills" aria-label="Instagram limits">
+        <div class="pill">Caption 2200</div>
+        <div class="pill">DM 1000</div>
+        <div class="pill">Bio 150</div>
+        <div class="pill">Hashtags 30</div>
+      </div>
     </section>
 
     <section class="workspace">
       <section class="panel editor">
         <div class="editor-top">
-          <div>
-            <div class="panel-label">Working text</div>
-            <p class="helper">Paste a caption, bio draft, DM, or comment. Everything updates live.</p>
-          </div>
+          <div class="panel-label">Input</div>
           <div class="button-row">
             <button type="button" class="button-strong" id="copy-button">Copy text</button>
             <button type="button" id="clear-button">Clear</button>
@@ -533,17 +448,11 @@
 
         <div class="editor-foot">
           <p class="helper" id="micro-summary">0 characters, 0 words, 0 hashtags.</p>
-          <p class="helper">Everything runs client-side in this file.</p>
         </div>
       </section>
 
       <aside class="panel summary">
-        <div class="summary-top">
-          <div>
-            <div class="panel-label">Live limits</div>
-            <p class="helper">The same text is checked against the common Instagram surfaces.</p>
-          </div>
-        </div>
+        <div class="summary-top"><div class="panel-label">Limits</div></div>
 
         <div class="main-stats">
           <article class="main-card" id="total-card">
@@ -647,11 +556,6 @@
             <div class="progress"><span id="bar-caption"></span></div>
           </article>
         </div>
-
-        <div class="footer-note">
-          Counts include spaces, line breaks, emojis, hashtags, and URLs. Username and profile name
-          use the commonly cited 30-character limit surfaced by the original tool UI.
-        </div>
       </aside>
     </section>
   </main>
@@ -665,7 +569,6 @@
     const wordCount = document.getElementById("word-count");
     const spaceCount = document.getElementById("space-count");
     const microSummary = document.getElementById("micro-summary");
-    const heroPreview = document.getElementById("hero-preview");
     const totalCard = document.getElementById("total-card");
     const remainingCard = document.getElementById("remaining-card");
     const toast = document.getElementById("toast");
@@ -804,7 +707,6 @@
       spaceCount.textContent = `${spaces} ${spaces === 1 ? "space" : "spaces"}`;
       microSummary.textContent =
         `${characters} characters, ${words} ${words === 1 ? "word" : "words"}, ${hashtags} ${hashtags === 1 ? "hashtag" : "hashtags"}.`;
-      heroPreview.textContent = `${characters} / 125`;
 
       totalCard.classList.remove("warning", "overflow");
       remainingCard.classList.remove("warning", "overflow");
