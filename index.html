@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Character Counter</title>
+  <meta
+    name="description"
+    content="A focused Instagram character counter for captions, bios, DMs, hashtags, and comments."
+  >
+  <link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%231b0f0a'/%3E%3Cpath d='M19 22h26v6H33v20h-7V28H19z' fill='%23ffb238'/%3E%3Ccircle cx='44' cy='21' r='4' fill='%23ff5e36'/%3E%3C/svg%3E"
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@500;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <style>
+    :root {
+      --bg: #f7f0e8;
+      --surface: rgba(255, 250, 245, 0.78);
+      --surface-strong: rgba(255, 250, 245, 0.94);
+      --ink: #1b0f0a;
+      --muted: #6f5d54;
+      --line: rgba(27, 15, 10, 0.12);
+      --accent: #ff5e36;
+      --accent-2: #ffb238;
+      --accent-3: #ff8fab;
+      --ok: #1d8f62;
+      --warn: #c56516;
+      --danger: #b42318;
+      --shadow: 0 24px 70px rgba(64, 28, 8, 0.16);
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --container: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 94, 54, 0.22), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(255, 178, 56, 0.26), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(255, 143, 171, 0.2), transparent 30%),
+        linear-gradient(140deg, #f4ede5 0%, #f8f3eb 42%, #efe2d4 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(27, 15, 10, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(27, 15, 10, 0.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+    }
+
+    main {
+      width: min(calc(100% - 32px), var(--container));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: clip;
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      padding: 34px;
+      border: 1px solid rgba(27, 15, 10, 0.08);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(160deg, rgba(255, 252, 248, 0.86), rgba(255, 246, 240, 0.68));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      isolation: isolate;
+      animation: rise 700ms ease-out both;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      right: -60px;
+      top: -40px;
+      border-radius: 50%;
+      background: conic-gradient(from 160deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+      opacity: 0.16;
+      filter: blur(12px);
+      z-index: -1;
+    }
+
+    .eyebrow,
+    .panel-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      max-width: 11ch;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(3.2rem, 7vw, 6.8rem);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+    }
+
+    .hero-copy {
+      margin: 0;
+      max-width: 42ch;
+      font-size: 1.04rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border: 1px solid rgba(27, 15, 10, 0.08);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.65);
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    .hero-aside {
+      align-self: end;
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: rgba(27, 15, 10, 0.95);
+      color: #fff8f2;
+      transform: rotate(-2.5deg);
+      box-shadow: 0 18px 50px rgba(27, 15, 10, 0.25);
+    }
+
+    .hero-aside strong {
+      display: block;
+      margin-top: 10px;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-aside p {
+      margin: 12px 0 0;
+      color: rgba(255, 248, 242, 0.74);
+      line-height: 1.5;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      margin-top: 24px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      animation: rise 700ms 80ms ease-out both;
+    }
+
+    .editor {
+      padding: 24px;
+    }
+
+    .editor-top,
+    .summary-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .summary-top {
+      margin-bottom: 20px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      color: var(--ink);
+      background: rgba(27, 15, 10, 0.07);
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    button:hover,
+    button:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(27, 15, 10, 0.12);
+      outline: none;
+    }
+
+    .button-strong {
+      color: #fff9f5;
+      background: linear-gradient(135deg, var(--accent), #ff7f3f);
+    }
+
+    .button-strong:hover,
+    .button-strong:focus-visible {
+      background: linear-gradient(135deg, #ff6d47, #ff8d43);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 360px;
+      resize: vertical;
+      border: 1px solid rgba(27, 15, 10, 0.1);
+      border-radius: 24px;
+      padding: 22px;
+      background: var(--surface-strong);
+      font: inherit;
+      font-size: 1.06rem;
+      line-height: 1.6;
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(255, 94, 54, 0.45);
+      box-shadow:
+        0 0 0 4px rgba(255, 94, 54, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .editor-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .helper {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .summary {
+      padding: 22px;
+    }
+
+    .main-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .main-card,
+    .metric {
+      border-radius: 24px;
+      border: 1px solid rgba(27, 15, 10, 0.08);
+      background: rgba(255, 253, 250, 0.88);
+      padding: 18px;
+    }
+
+    .main-card .label,
+    .metric .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+
+    .big-number {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+    }
+
+    .big-detail {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .metric-value {
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    .progress {
+      margin-top: 14px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(27, 15, 10, 0.08);
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 180ms ease, background 180ms ease;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .status.ok {
+      color: var(--ok);
+    }
+
+    .status.warn {
+      color: var(--warn);
+    }
+
+    .status.danger {
+      color: var(--danger);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(27, 15, 10, 0.06);
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 16px);
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: rgba(27, 15, 10, 0.94);
+      color: #fff8f2;
+      font-weight: 700;
+      box-shadow: 0 20px 40px rgba(27, 15, 10, 0.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .overflow .metric-value,
+    .overflow .big-number {
+      color: var(--danger);
+    }
+
+    .warning .metric-value,
+    .warning .big-number {
+      color: var(--warn);
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-aside {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: min(calc(100% - 20px), var(--container));
+        padding-top: 18px;
+        padding-bottom: 34px;
+      }
+
+      .hero,
+      .editor,
+      .summary {
+        padding: 18px;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(2.7rem, 17vw, 4.5rem);
+      }
+
+      .editor-top,
+      .summary-top,
+      .editor-foot {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .main-stats,
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      textarea {
+        min-height: 300px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .button-row {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Single-page utility</div>
+        <h1>Instagram counter.</h1>
+        <p class="hero-copy">
+          Type once and see the limits that matter: caption length, truncation, hashtags, bio, DM,
+          profile name, username, and comments. No ads. No SEO sludge. Just the numbers.
+        </p>
+        <div class="hero-meta">
+          <div class="pill">Caption limit 2200</div>
+          <div class="pill">Bio 150</div>
+          <div class="pill">DM 1000</div>
+          <div class="pill">Hashtags 30</div>
+        </div>
+      </div>
+      <aside class="hero-aside">
+        <div class="panel-label">First fold</div>
+        <strong id="hero-preview">0 / 125</strong>
+        <p>
+          Instagram truncates longer captions in-feed. Keep the hook in the first 125 characters if
+          you want the visible preview to land.
+        </p>
+      </aside>
+    </section>
+
+    <section class="workspace">
+      <section class="panel editor">
+        <div class="editor-top">
+          <div>
+            <div class="panel-label">Working text</div>
+            <p class="helper">Paste a caption, bio draft, DM, or comment. Everything updates live.</p>
+          </div>
+          <div class="button-row">
+            <button type="button" class="button-strong" id="copy-button">Copy text</button>
+            <button type="button" id="clear-button">Clear</button>
+          </div>
+        </div>
+
+        <label class="sr-only" for="text-input" hidden>Instagram text input</label>
+        <textarea
+          id="text-input"
+          spellcheck="true"
+          placeholder="Start typing. Spaces, line breaks, emojis, hashtags, and URLs all count."
+        ></textarea>
+
+        <div class="editor-foot">
+          <p class="helper" id="micro-summary">0 characters, 0 words, 0 hashtags.</p>
+          <p class="helper">Everything runs client-side in this file.</p>
+        </div>
+      </section>
+
+      <aside class="panel summary">
+        <div class="summary-top">
+          <div>
+            <div class="panel-label">Live limits</div>
+            <p class="helper">The same text is checked against the common Instagram surfaces.</p>
+          </div>
+        </div>
+
+        <div class="main-stats">
+          <article class="main-card" id="total-card">
+            <span class="label">Characters typed</span>
+            <div class="big-number" id="total-count">0 / 2200</div>
+            <div class="big-detail" id="word-count">0 words</div>
+          </article>
+          <article class="main-card" id="remaining-card">
+            <span class="label">Characters remaining</span>
+            <div class="big-number" id="remaining-count">2200</div>
+            <div class="big-detail" id="space-count">0 spaces</div>
+          </article>
+        </div>
+
+        <div class="metrics-grid">
+          <article class="metric" data-limit="1000" data-key="dm">
+            <div class="metric-head">
+              <div>
+                <span class="label">DM</span>
+                <div class="status" id="status-dm">Safe</div>
+              </div>
+              <div class="metric-value" id="value-dm">0 / 1000</div>
+            </div>
+            <div class="progress"><span id="bar-dm"></span></div>
+          </article>
+
+          <article class="metric" data-limit="150" data-key="bio">
+            <div class="metric-head">
+              <div>
+                <span class="label">Bio</span>
+                <div class="status" id="status-bio">Safe</div>
+              </div>
+              <div class="metric-value" id="value-bio">0 / 150</div>
+            </div>
+            <div class="progress"><span id="bar-bio"></span></div>
+          </article>
+
+          <article class="metric" data-limit="30" data-key="username">
+            <div class="metric-head">
+              <div>
+                <span class="label">Username</span>
+                <div class="status" id="status-username">Safe</div>
+              </div>
+              <div class="metric-value" id="value-username">0 / 30</div>
+            </div>
+            <div class="progress"><span id="bar-username"></span></div>
+          </article>
+
+          <article class="metric" data-limit="30" data-key="profile">
+            <div class="metric-head">
+              <div>
+                <span class="label">Profile name</span>
+                <div class="status" id="status-profile">Safe</div>
+              </div>
+              <div class="metric-value" id="value-profile">0 / 30</div>
+            </div>
+            <div class="progress"><span id="bar-profile"></span></div>
+          </article>
+
+          <article class="metric" data-limit="125" data-key="truncation">
+            <div class="metric-head">
+              <div>
+                <span class="label">Caption truncation</span>
+                <div class="status" id="status-truncation">Visible in full</div>
+              </div>
+              <div class="metric-value" id="value-truncation">0 / 125</div>
+            </div>
+            <div class="progress"><span id="bar-truncation"></span></div>
+          </article>
+
+          <article class="metric" data-limit="30" data-key="hashtags">
+            <div class="metric-head">
+              <div>
+                <span class="label">Hashtags</span>
+                <div class="status" id="status-hashtags">0 found</div>
+              </div>
+              <div class="metric-value" id="value-hashtags">0 / 30</div>
+            </div>
+            <div class="progress"><span id="bar-hashtags"></span></div>
+          </article>
+
+          <article class="metric" data-limit="2200" data-key="comment">
+            <div class="metric-head">
+              <div>
+                <span class="label">Comment</span>
+                <div class="status" id="status-comment">Safe</div>
+              </div>
+              <div class="metric-value" id="value-comment">0 / 2200</div>
+            </div>
+            <div class="progress"><span id="bar-comment"></span></div>
+          </article>
+
+          <article class="metric" data-limit="2200" data-key="caption">
+            <div class="metric-head">
+              <div>
+                <span class="label">Caption</span>
+                <div class="status" id="status-caption">Safe</div>
+              </div>
+              <div class="metric-value" id="value-caption">0 / 2200</div>
+            </div>
+            <div class="progress"><span id="bar-caption"></span></div>
+          </article>
+        </div>
+
+        <div class="footer-note">
+          Counts include spaces, line breaks, emojis, hashtags, and URLs. Username and profile name
+          use the commonly cited 30-character limit surfaced by the original tool UI.
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const textInput = document.getElementById("text-input");
+    const totalCount = document.getElementById("total-count");
+    const remainingCount = document.getElementById("remaining-count");
+    const wordCount = document.getElementById("word-count");
+    const spaceCount = document.getElementById("space-count");
+    const microSummary = document.getElementById("micro-summary");
+    const heroPreview = document.getElementById("hero-preview");
+    const totalCard = document.getElementById("total-card");
+    const remainingCard = document.getElementById("remaining-card");
+    const toast = document.getElementById("toast");
+
+    const captionLimit = 2200;
+    const metricConfig = {
+      dm: { limit: 1000, noun: "characters", label: "DM" },
+      bio: { limit: 150, noun: "characters", label: "Bio" },
+      username: { limit: 30, noun: "characters", label: "Username" },
+      profile: { limit: 30, noun: "characters", label: "Profile name" },
+      truncation: { limit: 125, noun: "characters", label: "Caption truncation" },
+      hashtags: { limit: 30, noun: "hashtags", label: "Hashtags" },
+      comment: { limit: 2200, noun: "characters", label: "Comment" },
+      caption: { limit: 2200, noun: "characters", label: "Caption" }
+    };
+
+    function countWords(text) {
+      return text.trim() ? text.trim().split(/\s+/).length : 0;
+    }
+
+    function countSpaces(text) {
+      const matches = text.match(/ /g);
+      return matches ? matches.length : 0;
+    }
+
+    function countHashtags(text) {
+      const matches = text.match(/(^|\s)#[\p{L}\p{N}_]+/gu);
+      return matches ? matches.length : 0;
+    }
+
+    function getStateClass(percent, value, limit) {
+      if (value > limit) return "danger";
+      if (percent >= 80) return "warn";
+      return "ok";
+    }
+
+    function describeMetric(key, value, limit) {
+      if (key === "hashtags") {
+        if (value === 0) return ["0 found", "ok"];
+        if (value > limit) return [`${value - limit} over the limit`, "danger"];
+        if (value >= 25) return [`${limit - value} left`, "warn"];
+        return [`${value} found`, "ok"];
+      }
+
+      if (key === "truncation") {
+        if (value > limit) return [`Hidden after ${limit}`, "warn"];
+        return ["Visible in full", "ok"];
+      }
+
+      if (value > limit) {
+        return [`${value - limit} over`, "danger"];
+      }
+
+      if (value >= limit * 0.8) {
+        return [`${limit - value} left`, "warn"];
+      }
+
+      return ["Safe", "ok"];
+    }
+
+    function setMetric(key, value) {
+      const { limit, noun } = metricConfig[key];
+      const percent = Math.min((value / limit) * 100, 100);
+      const status = document.getElementById(`status-${key}`);
+      const metricValue = document.getElementById(`value-${key}`);
+      const bar = document.getElementById(`bar-${key}`);
+      const card = metricValue.closest(".metric");
+      const [message, stateClass] = describeMetric(key, value, limit);
+
+      metricValue.textContent = `${value} / ${limit}`;
+      status.textContent = message;
+      status.className = `status ${stateClass}`;
+      card.classList.remove("warning", "overflow");
+      if (value > limit) {
+        card.classList.add("overflow");
+      } else if (percent >= 80) {
+        card.classList.add("warning");
+      }
+
+      bar.style.width = `${percent}%`;
+      bar.style.background =
+        value > limit
+          ? "linear-gradient(90deg, #b42318, #ff6b6b)"
+          : percent >= 80
+            ? "linear-gradient(90deg, #c56516, #ffb238)"
+            : "linear-gradient(90deg, var(--accent), var(--accent-2))";
+
+      if (key === "hashtags") {
+        metricValue.textContent = `${value} / ${limit}`;
+        status.textContent = message;
+      }
+
+      if (noun === "hashtags" && value === 1) {
+        status.textContent = value > limit ? message : "1 found";
+      }
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeoutId);
+      showToast.timeoutId = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    async function copyText() {
+      if (!navigator.clipboard) {
+        textInput.select();
+        document.execCommand("copy");
+        showToast("Copied");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(textInput.value);
+        showToast("Copied");
+      } catch (error) {
+        textInput.select();
+        document.execCommand("copy");
+        showToast("Copied");
+      }
+    }
+
+    function updateCounts() {
+      const text = textInput.value;
+      const characters = text.length;
+      const words = countWords(text);
+      const spaces = countSpaces(text);
+      const hashtags = countHashtags(text);
+      const remaining = captionLimit - characters;
+
+      totalCount.textContent = `${characters} / ${captionLimit}`;
+      remainingCount.textContent = String(remaining);
+      wordCount.textContent = `${words} ${words === 1 ? "word" : "words"}`;
+      spaceCount.textContent = `${spaces} ${spaces === 1 ? "space" : "spaces"}`;
+      microSummary.textContent =
+        `${characters} characters, ${words} ${words === 1 ? "word" : "words"}, ${hashtags} ${hashtags === 1 ? "hashtag" : "hashtags"}.`;
+      heroPreview.textContent = `${characters} / 125`;
+
+      totalCard.classList.remove("warning", "overflow");
+      remainingCard.classList.remove("warning", "overflow");
+      if (characters > captionLimit) {
+        totalCard.classList.add("overflow");
+        remainingCard.classList.add("overflow");
+      } else if (characters >= captionLimit * 0.8) {
+        totalCard.classList.add("warning");
+        remainingCard.classList.add("warning");
+      }
+
+      setMetric("caption", characters);
+      setMetric("comment", characters);
+      setMetric("dm", characters);
+      setMetric("bio", characters);
+      setMetric("username", characters);
+      setMetric("profile", characters);
+      setMetric("truncation", characters);
+      setMetric("hashtags", hashtags);
+    }
+
+    document.getElementById("copy-button").addEventListener("click", copyText);
+    document.getElementById("clear-button").addEventListener("click", () => {
+      textInput.value = "";
+      updateCounts();
+      textInput.focus();
+    });
+    textInput.addEventListener("input", updateCounts);
+
+    updateCounts();
+  </script>
+</body>
+</html>
